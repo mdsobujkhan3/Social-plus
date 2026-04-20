@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="bn" data-lang="bn" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Social Plus - সাইন আপ</title>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzkGPXth5hmptdntH1a3oDfC45BYeLZA8",
+      authDomain: "social-plus-dce88.firebaseapp.com",
+      projectId: "social-plus-dce88",
+      storageBucket: "social-plus-dce88.firebasestorage.app",
+      messagingSenderId: "1076949644986",
+      appId: "1:1076949644986:web:0b648cb449aa4e635c3483"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    getRedirectResult(auth).then((result) => {
+      if (result && result.user) {
+        const user = result.user;
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('loggedInUser', JSON.stringify({
+          name: user.displayName,
+          email: user.email,
+          picture: user.photoURL,
+          loginType: 'google'
+        }));
+        window.location.href = 'home.html';
+      }
+    }).catch((e) => console.error(e));
+
+    window.googleSignup = async function() {
+      await signInWithRedirect(auth, provider);
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --text: #111827;
+      --text-secondary: #6b7280;
+      --border: #d1d5db;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+      --success: #10b981;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+      --transition: all 0.2s ease;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      transition: var(--transition);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 400px;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 1.5rem;
+      object-fit: cover;
+      background: var(--primary);
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      text-align: center;
+      font-size: 0.95rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      background: transparent;
+      color: var(--text);
+      transition: var(--transition);
+    }
+
+    #password, #confirmPassword {
+      padding-right: 3.2rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    label {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: var(--transition);
+      padding: 0 0.35rem;
+      background: var(--surface);
+      line-height: 1;
+    }
+
+    input:focus + label,
+    input:not(:placeholder-shown) + label {
+      top: -0.55rem;
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      z-index: 2;
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 0.82rem;
+      margin-top: 0.4rem;
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.95rem;
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.97rem;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover { background: var(--primary-hover); }
+
+    .btn.loading {
+      pointer-events: none;
+    }
+
+    .btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 3px solid white;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      right: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.8rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider span { padding: 0 1.2rem; }
+
+    .google-btn {
+      width: 100%;
+      padding: 0.95rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.97rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .google-btn:hover {
+      border-color: var(--primary);
+      background: rgba(37,99,235,0.05);
+    }
+
+    .login-text {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .login-text a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-text a:hover { text-decoration: underline; }
+
+    .header-controls {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .lang-dropdown { position: relative; }
+
+    .lang-current {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: var(--transition);
+    }
+
+    .lang-current:hover { border-color: var(--primary); }
+
+    .lang-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 130px;
+      padding: 0.6rem 0;
+      display: none;
+      z-index: 100;
+    }
+
+    .lang-menu.show { display: block; }
+
+    .lang-option {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .lang-option:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Success Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--success);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-10px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-controls">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+
+    <div class="lang-dropdown">
+      <button class="lang-current" id="langCurrent" aria-expanded="false">
+        <span id="currentLangText">বাংলা</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor">
+          <path d="M6 9L2 5h8z"/>
+        </svg>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <div class="lang-option" data-lang="bn">বাংলা</div>
+        <div class="lang-option" data-lang="en">English</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <video class="logo" autoplay loop muted playsinline>
+      <source src="logo.mp4" type="video/mp4">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="32" fill="#2563eb"/>
+        <text x="32" y="42" font-family="Inter" font-size="28" font-weight="700" fill="white" text-anchor="middle">SP</text>
+      </svg>
+    </video>
+
+    <h1 data-en="Create Account" data-bn="অ্যাকাউন্ট তৈরি করুন">অ্যাকাউন্ট তৈরি করুন</h1>
+    <p class="subtitle" data-en="Join Social Plus today" data-bn="আজই Social Plus-এ যোগ দিন">
+      আজই Social Plus-এ যোগ দিন
+    </p>
+
+    <form id="signupForm" novalidate>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="text" id="fullName" placeholder=" " required autocomplete="name">
+          <label for="fullName" data-en="Full Name" data-bn="পুরো নাম">পুরো নাম</label>
+        </div>
+        <p class="error-message" id="fullNameError" data-en="Name is required" data-bn="নাম দিন"></p>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="text" id="username" placeholder=" " required autocomplete="username">
+          <label for="username" data-en="Username" data-bn="ইউজারনেম">ইউজারনেম</label>
+        </div>
+        <p class="error-message" id="usernameError" data-en="Username is required" data-bn="ইউজারনেম দিন"></p>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="email" id="email" placeholder=" " required autocomplete="email">
+          <label for="email" data-en="Email" data-bn="ইমেইল">ইমেইল</label>
+        </div>
+        <p class="error-message" id="emailError" data-en="Valid email is required" data-bn="সঠিক ইমেইল দিন"></p>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="tel" id="phone" placeholder=" " autocomplete="tel">
+          <label for="phone" data-en="Phone (optional)" data-bn="ফোন (ঐচ্ছিক)">ফোন (ঐচ্ছিক)</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder=" " required autocomplete="new-password">
+          <label for="password" data-en="Password" data-bn="পাসওয়ার্ড">পাসওয়ার্ড</label>
+          <button type="button" class="toggle-password" id="togglePassword" aria-label="Show/hide password">👁️</button>
+        </div>
+        <p class="error-message" id="passwordError" data-en="Password is required" data-bn="পাসওয়ার্ড দিন"></p>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="password" id="confirmPassword" placeholder=" " required autocomplete="new-password">
+          <label for="confirmPassword" data-en="Confirm Password" data-bn="পাসওয়ার্ড নিশ্চিত করুন">পাসওয়ার্ড নিশ্চিত করুন</label>
+          <button type="button" class="toggle-password" id="toggleConfirmPassword" aria-label="Show/hide confirm password">👁️</button>
+        </div>
+        <p class="error-message" id="confirmPasswordError" data-en="Passwords do not match" data-bn="পাসওয়ার্ড মিলছে না"></p>
+      </div>
+
+      <button type="submit" class="btn" id="signupBtn" data-en="Create Account" data-bn="অ্যাকাউন্ট তৈরি করুন">
+        অ্যাকাউন্ট তৈরি করুন
+      </button>
+    </form>
+
+    <div class="divider">
+      <span data-en="or" data-bn="অথবা">অথবা</span>
+    </div>
+
+    <button type="button" class="google-btn" onclick="googleSignup()" aria-label="Sign up with Google">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.51h5.84c-.25 1.31-.98 2.42-2.07 3.16v2.63h3.35c1.96-1.81 3.1-4.47 3.1-8.05z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-1.01 7.28-2.73l-3.35-2.63c-1.01.68-2.29 1.08-3.93 1.08-3.02 0-5.58-2.04-6.49-4.79H.96v2.67C2.75 20.99 6.98 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.51 14.21c-.23-.68-.36-1.41-.36-2.21s.13-1.53.36-2.21V7.34H.96C.35 8.85 0 10.39 0 12s.35 3.15.96 4.66l4.55-2.45z"/>
+        <path fill="#EA4335" d="M12 4.98c1.64 0 3.11.56 4.27 1.66l3.19-3.19C17.46 1.01 14.97 0 12 0 6.98 0 2.75 2.01.96 4.96l4.55 2.45C6.42 5.02 8.98 4.98 12 4.98z"/>
+      </svg>
+      <span data-en="Sign up with Google" data-bn="Google দিয়ে সাইন আপ করুন">
+        Google দিয়ে সাইন আপ করুন
+      </span>
+    </button>
+
+    <p class="login-text">
+      <span data-en="Already have an account?" data-bn="ইতিমধ্যে অ্যাকাউন্ট আছে?">ইতিমধ্যে অ্যাকাউন্ট আছে?</span>
+      <a href="index.html" data-en="Sign in" data-bn="লগ ইন করুন">লগ ইন করুন</a>
+    </p>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="toast" id="successToast">
+    <span>🎉</span>
+    <span id="toastMessage"></span>
+  </div>
+
+  <script>
+    // থিম টগল
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.dataset.theme;
+      document.documentElement.dataset.theme = current === 'dark' ? 'light' : 'dark';
+      themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙';
+      localStorage.setItem('theme', document.documentElement.dataset.theme);
+    });
+
+    if (localStorage.getItem('theme') === 'dark' || 
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.dataset.theme = 'dark';
+      themeToggle.textContent = '☀️';
+    }
+
+    // ভাষা সিস্টেম
+    const langCurrent = document.getElementById('langCurrent');
+    const langMenu = document.getElementById('langMenu');
+    const currentLangText = document.getElementById('currentLangText');
+    const translatable = document.querySelectorAll('[data-en][data-bn]');
+
+    function setLanguage(lang) {
+      document.documentElement.setAttribute('lang', lang);
+      document.documentElement.dataset.lang = lang;
+      currentLangText.textContent = lang === 'bn' ? 'বাংলা' : 'English';
+      langCurrent.setAttribute('aria-expanded', 'false');
+      translatable.forEach(el => el.textContent = el.getAttribute(`data-${lang}`));
+      localStorage.setItem('preferredLanguage', lang);
+    }
+
+    const savedLang = localStorage.getItem('preferredLanguage') || 'bn';
+    setLanguage(savedLang);
+
+    langCurrent.addEventListener('click', e => {
+      e.stopPropagation();
+      const expanded = langCurrent.getAttribute('aria-expanded') === 'true';
+      langCurrent.setAttribute('aria-expanded', !expanded);
+      langMenu.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.lang-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        setLanguage(opt.dataset.lang);
+        langMenu.classList.remove('show');
+        langCurrent.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', e => {
+      if (!langCurrent.contains(e.target)) {
+        langMenu.classList.remove('show');
+        langCurrent.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // পাসওয়ার্ড দেখানো/লুকানো
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const toggleConfirm = document.getElementById('toggleConfirmPassword');
+    const confirmInput = document.getElementById('confirmPassword');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+    });
+
+    toggleConfirm.addEventListener('click', () => {
+      const type = confirmInput.type === 'password' ? 'text' : 'password';
+      confirmInput.type = type;
+      toggleConfirm.textContent = type === 'password' ? '👁️' : '🙈';
+    });
+
+    // ফর্ম ভ্যালিডেশন + সেভ + toast + রিডাইরেক্ট
+    const signupForm = document.getElementById('signupForm');
+    const signupBtn = document.getElementById('signupBtn');
+    const successToast = document.getElementById('successToast');
+    const toastMessage = document.getElementById('toastMessage');
+
+    function showError(id, show = true) {
+      const err = document.getElementById(id + 'Error');
+      if (err) err.style.display = show ? 'block' : 'none';
+    }
+
+    function validateForm() {
+      let valid = true;
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirmPassword').value;
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!fullName) { showError('fullName', true); valid = false; } else { showError('fullName', false); }
+      if (!username) { showError('username', true); valid = false; } else { showError('username', false); }
+      if (!email || !emailRegex.test(email)) { showError('email', true); valid = false; } else { showError('email', false); }
+      if (!password) { showError('password', true); valid = false; } else { showError('password', false); }
+      if (!confirm || confirm !== password) { showError('confirmPassword', true); valid = false; } else { showError('confirmPassword', false); }
+
+      return valid;
+    }
+
+    signupForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      if (!validateForm()) return;
+
+      signupBtn.classList.add('loading');
+      signupBtn.disabled = true;
+      signupBtn.textContent = '';
+
+      // এখানে সাইন আপ সফল → লোকাল স্টোরেজে তথ্য সেভ করা হচ্ছে
+      localStorage.setItem('registeredUser', JSON.stringify({
+        fullName: document.getElementById('fullName').value.trim(),
+        username: document.getElementById('username').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        password: document.getElementById('password').value
+      }));
+
+      const lang = document.documentElement.dataset.lang;
+      const successMsg = lang === 'bn' 
+        ? 'অ্যাকাউন্ট তৈরি সফল! লগইন পেজে নিয়ে যাচ্ছি...' 
+        : 'Account created successfully! Redirecting to sign in...';
+
+      setTimeout(() => {
+        toastMessage.textContent = successMsg;
+        successToast.classList.add('show');
+
+        setTimeout(() => {
+          successToast.classList.remove('show');
+          window.location.href = 'index.html';  // লগইন পেজে যাবে
+        }, 2500);
+
+      }, 1800);
+    });
+
+    // ইনপুটে টাইপ করলে এরর সরানো
+    document.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        if (inp.value.trim()) {
+          const id = inp.id;
+          if (id === 'confirmPassword') {
+            if (inp.value === document.getElementById('password').value) {
+              showError('confirmPassword', false);
+            }
+          } else {
+            showError(id, false);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
